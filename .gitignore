@@ -1,5 +1,8 @@
 .vscode/
 .idea/
+db/
+
+*.pem
 
 __pycache__/
 

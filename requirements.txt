@@ -2,5 +2,7 @@ Flask===3.1.1
 Flask-RESTful===0.3.10
 Flask-SQLAlchemy===3.1.1
 Flask-Celery===2.4.3
+Flask-Session==0.8.0
 Flask-Migrate===4.1.0
 python-dotenv===1.1.0
+redis==6.2.0
