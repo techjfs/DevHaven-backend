@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 数据库服务
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: devhaven
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../../db/postgres/postgres_data:/var/lib/postgresql/data
+    networks:
+      - flask_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flask_user -d flask_app"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis 服务
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ../../db/redis/redis_data:/data
+    networks:
+      - flask_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+# 定义网络
+networks:
+  flask_network:
+    driver: bridge

@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # Flask 应用服务
+  web:
+    image: web:latest
+    container_name: flask_app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      # 数据库配置
+      DATABASE_URL: postgresql://flask_user:flask_password@postgres:5432/flask_app
+      # Redis 配置
+      REDIS_URL: redis://redis:6379/0
+      # Flask 配置
+      FLASK_ENV: development
+      FLASK_DEBUG: 1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - flask_network
+    volumes:
+      - .:/app
+    working_dir: /app
+
+# 定义网络
+networks:
+  flask_network:
+    driver: bridge
