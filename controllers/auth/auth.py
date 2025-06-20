@@ -29,7 +29,6 @@ class LoginResource(Resource):
         state = auth_manager.generate_state(login_data.provider)
         
         # 生成重定向URI
-        # redirect_uri = login_data.redirect_uri or url_for('auth.callback', _external=True)
         redirect_uri = current_app.config.get('GITHUB_REDIRECT_URI')
         
         # 获取授权URL
@@ -61,7 +60,6 @@ class CallbackResource(Resource):
         
         try:
             # 生成重定向URI
-            # redirect_uri = url_for('auth.callback', _external=True)
             redirect_uri = current_app.config.get('GITHUB_REDIRECT_URI')
             
             # 用授权码换取访问令牌
@@ -82,7 +80,6 @@ class CallbackResource(Resource):
             
             # 返回用户信息
             user_profile = UserProfile(**user.to_dict())
-            print(f"user_profile:{user_profile}")
             response = AuthResponse(success=True, user=user_profile, message='登录成功')
             return response.model_dump()
             
@@ -108,7 +105,7 @@ class ProfileResource(Resource):
             return {'success': False, 'message': '未登录'}, 401
         
         user_profile = UserProfile(**user.to_dict())
-        return {'success': True, 'user': user_profile.dict()}
+        return {'success': True, 'user': user_profile.model_dump()}
 
 class ProvidersResource(Resource):
     """可用登录方式资源"""

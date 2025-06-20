@@ -1,5 +1,5 @@
 from extensions.ext_db import db
-from datetime import datetime
+from datetime import datetime, timezone
 
 class OAuthAccount(db.Model):
     __tablename__ = 'oauth_accounts'
@@ -13,8 +13,8 @@ class OAuthAccount(db.Model):
     refresh_token = db.Column(db.Text, nullable=True)
     token_expires_at = db.Column(db.DateTime, nullable=True)
     raw_data = db.Column(db.JSON, nullable=True)  # 存储原始OAuth数据
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
     
     __table_args__ = (
         db.UniqueConstraint('provider', 'provider_user_id', name='unique_provider_user'),
