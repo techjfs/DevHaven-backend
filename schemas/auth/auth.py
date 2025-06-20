@@ -1,6 +1,6 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
-from datetime import datetime
+from utils.datetime import Datetime2Timestamp
 
 class LoginRequest(BaseModel):
     provider: str
@@ -20,7 +20,7 @@ class UserProfile(BaseModel):
     username: str
     avatar_url: Optional[str]
     is_active: bool
-    created_at: Optional[datetime]
+    created_at: Optional[Datetime2Timestamp]
 
 class AuthResponse(BaseModel):
     success: bool

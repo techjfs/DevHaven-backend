@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, url_for, current_app
+from flask import Blueprint, request, jsonify, url_for, current_app, redirect
 from flask_restful import Api, Resource
 from pydantic import ValidationError
 from extensions.ext_db import db
@@ -29,7 +29,8 @@ class LoginResource(Resource):
         state = auth_manager.generate_state(login_data.provider)
         
         # 生成重定向URI
-        redirect_uri = login_data.redirect_uri or url_for('auth.callback', _external=True)
+        # redirect_uri = login_data.redirect_uri or url_for('auth.callback', _external=True)
+        redirect_uri = current_app.config.get('GITHUB_REDIRECT_URI')
         
         # 获取授权URL
         auth_url = provider.get_auth_url(state, redirect_uri)
@@ -60,7 +61,8 @@ class CallbackResource(Resource):
         
         try:
             # 生成重定向URI
-            redirect_uri = url_for('auth.callback', _external=True)
+            # redirect_uri = url_for('auth.callback', _external=True)
+            redirect_uri = current_app.config.get('GITHUB_REDIRECT_URI')
             
             # 用授权码换取访问令牌
             token_info = provider.exchange_code_for_token(callback_data.code, redirect_uri)
@@ -80,8 +82,9 @@ class CallbackResource(Resource):
             
             # 返回用户信息
             user_profile = UserProfile(**user.to_dict())
+            print(f"user_profile:{user_profile}")
             response = AuthResponse(success=True, user=user_profile, message='登录成功')
-            return response.dict()
+            return response.model_dump()
             
         except Exception as e:
             db.session.rollback()
